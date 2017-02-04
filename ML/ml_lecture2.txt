@@ -1,0 +1,182 @@
+(* lists must be homogeneous -- all elements of the same type*)
+- [3, 3.5];
+stdIn:2.1-2.9 Error: operator and operand don't agree [overload conflict]
+  operator domain: [int ty] * [int ty] list
+  operand:         [int ty] * real list
+  in expression:
+    3 :: 3.5 :: nil
+
+- (* tuples are like structures in other languages,
+     but fields are accessed by position *)
+
+- (4,"hello");
+val it = (4,"hello") : int * string
+
+(* the elements of a tuple are generally accessed using patterns *)
+- fun f (a,b) = (a+1,b);
+val f = fn : int * 'a -> int * 'a
+- f(3, "bye");
+val it = (4,"bye") : int * string
+
+
+- (* this computes the length of a list *)
+- fun length [] = 0
+=  |  length (y::ys) = 1 + length ys;
+val length = fn : 'a list -> int
+
+(* The above type says that "length is a function that takes an 
+   alpha list, for any type alpha, and returns an integer". 
+
+   The type variable alpha, written as 'a, makes length polymorphic. *)
+
+(* Can be applied to all types of lists *)
+- length [1,2,3];
+val it = 3 : int
+- length ["hello", "bye"];
+val it = 2 : int
+
+(* The type of [] is alpha list, so [] itself is polymorphic *)
+- [];
+val it = [] : 'a list
+
+(* ML assumes that the operands to + are integers *)
+- fun g (a,b) = a+b;
+val g = fn : int * int -> int
+
+- (* Need to explicitly specify if a function on reals is desired *)
+- fun h (a:real,b) = a+b;
+val h = fn : real * real -> real
+
+
+- (* All functions take exactly one parameter, but they are "curried" *)
+  (* This is actually a function that takes a single parameter x and 
+     returns a function that takes a parameter y and computes x+y *)
+- fun f x y = x + y;
+val f = fn : int -> int -> int
+
+(* The arrow is right associative, so the above type is the same as 
+   int -> (int - > int)   *)
+
+
+- val g = f 3;
+val g = fn : int -> int
+- g 7;
+val it = 10 : int
+
+
+- (* LAMBDA expressions are written:  fn x => body *)
+- val h = fn y => y + 1;
+val h = fn : int -> int
+
+
+- (* equivalent way of defining f, above, would be *)
+- fun f x = fn y => x + y;
+val f = fn : int -> int -> int
+
+
+- (* define the MAP function -- notice the type of MAP *)
+- fun map f [] = []
+=  |  map f (x::xs) = (f x) :: map f xs
+= ;
+val map = fn : ('a -> 'b) -> 'a list -> 'b list
+
+(* Here is the compose function.  Notice it's type *)
+- fun compose f g = fn x => f(g x)
+= ;
+val compose = fn : ('a -> 'b) -> ('c -> 'a) -> 'c -> 'b
+
+
+- (* defining your own type - enumerating all the elements of the set *)
+- datatype stoplight = red | green | yellow;
+datatype stoplight = green | red | yellow
+
+(* The values of a datatype can be used in patterns *)
+- fun drive green = "go"
+=  |  drive red = "stop"
+=  |  drive yellow = "go faster"
+= ;
+val drive = fn : stoplight -> string
+- yellow;
+val it = yellow : stoplight
+- drive yellow;
+val it = "go faster" : string
+
+
+(* the values of a datatype can have other values associated with them *)
+- datatype mytype = age of int | height of real;
+datatype mytype = age of int | height of real
+- age 3;
+val it = age 3 : mytype
+- height 6.3;
+val it = height 6.3 : mytype
+
+
+(* Again, these can be used in patterns *)
+- fun evaluate (age n) = if n > 40 then "you're old" else "you're young" 
+=  |  evaluate (height h) = if h > 6.0 then "you're tall" else "you're short";
+val evaluate = fn : mytype -> string
+
+- evaluate (height 5.4);
+val it = "you're short" : string
+- [age 20, height 4.5, age 90];
+val it = [age 20,height 4.5,age 90] : mytype list
+
+
+- (* datatypes can be recursive *)
+- datatype tree = leaf of int | node of tree * tree ;
+datatype tree = leaf of int | node of tree * tree
+- leaf 3;
+val it = leaf 3 : tree
+- node (leaf 3, leaf 4) ;
+val it = node (leaf 3,leaf 4) : tree
+- val t = node (leaf 3, node (leaf 4, leaf 5)) ;
+val t = node (leaf 3,node (leaf #,leaf #)) : tree
+
+(* Easy to write the FRINGE function, which returns a list of the 
+   values associated with the leaves of a tree *)
+- fun fringe (leaf x) = [x]
+=  |  fringe (node (l,r)) = fringe l  @  fringe r;
+val fringe = fn : tree -> int list
+- fringe t;
+val it = [3,4,5] : int list
+
+
+- (* defining a polymorphic datatype *)
+- datatype 'a tree = leaf of 'a | node of 'a tree * 'a tree;
+datatype 'a tree = leaf of 'a | node of 'a tree * 'a tree
+- leaf "hello";
+val it = leaf "hello" : string tree
+- leaf 3;
+val it = leaf 3 : int tree
+
+(* Notice that whatever type 'a is instantiated with has to be 
+   the same throughout the entire tree *)
+- node (leaf 4, leaf 5.6)
+= ;
+stdIn:35.1-35.24 Error: operator and operand don't agree [overload conflict]
+  operator domain: [int ty] tree * [int ty] tree
+  operand:         [int ty] tree * real tree
+  in expression:
+    node (leaf 4,leaf 5.6)
+
+(* Here's the polymorphic fringe function.  Notice that the code is exactly
+   the same as for the non-polymorphic ("monomorphic") version above *)
+- fun fringe (leaf x) = [x]
+ |  fringe (node (l,r)) = fringe l  @  fringe r
+= = ;
+
+val fringe = fn : 'a tree -> 'a list
+- fringe (leaf 5);
+val it = [5] : int list
+- fringe (node (leaf 5.6, leaf 7.8));
+val it = [5.6,7.8] : real list
+- 
+- 
+- (* defining your own infix operators *)
+- infix ++
+= ;
+infix ++
+- fun x ++ y = x+(y*2);
+val ++ = fn : int * int -> int
+- 3++4;
+val it = 11 : int

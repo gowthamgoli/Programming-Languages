@@ -1,0 +1,157 @@
+> ; Basic data types in Scheme
+0 ; integers
+0
+> 3.5 ; floating point
+3.5
+> "There are strings"
+"There are strings"
+> ; a symbol is a data type that has a name and nothing else
+'hello
+hello
+;;; integers can be arbitrarily large
+> 6754745645754756456456
+6754745645754756456456
+> ;; the primary aggregate type is a list
+'(1 3.4 goodbye "hello")
+(1 3.4 goodbye "hello")
+> ;; lists can be nested
+'(1 2 (3 4 (5 6) 7) 8)
+(1 2 (3 4 (5 6) 7) 8)
+> '(3 4 4.5 "string" ben)
+(3 4 4.5 "string" ben)
+> ;;; expressions are of the form: (<fn-or-keyword> ... )
+(+ 3 4)
+7
+> (+ 3 (* 4 5))
+23
+> ;; conditional is of the form (IF <cond> <then-part> <else-part>)
+(if (= 3 4) 5 (+ 6 7))
+13
+> ;;; variable definitions: (DEFINE <name> <expression>)
+> (define x (if (= 0 (+ 1 2)) (* 5 7) (* 1 3)))
+> x
+3
+> (- x 10)
+-7
+> ;;; defining functions: (DEFINE (<fn-name> <param1> ... <paramN>)
+(define (f x y) (* x (+ y 2)))
+> (f 5 7)
+45
+> (define (fac n)
+  (if (= n 0) 1 (* n (fac (- n 1)))))
+
+> (fac 10)
+3628800
+> ;; COND can be used instead of a sequence of nested IF's. 
+(cond ((< x 0) 0)
+      ((= x 1) (* x 2))
+      ((= x 3) (* x 6))
+      (else 100))
+18
+> 
+> ;;; constructing lists
+;;; one way is by listing the elements:
+'(1 2 4 96.4 "hello")   ;; The quote ' indicates that it should not be treated as a function call.
+(1 2 4 96.4 "hello")
+> x  ;; this is a reference to the variable x 
+3
+> 'x  ;; the quote indicates that it is the symbol x, not the variable x.
+x
+> 'Ben ;; the quote indicates that it is the symbol Ben
+ben
+> ben  ;; without the quote, the interpreter tries to return the value of the variable ben (not defined).
+ben: undefined;
+ cannot reference undefined identifier
+  context...:
+   /Applications/Racket v6.2.1/collects/racket/private/misc.rkt:87:7
+   /Applications/Racket v6.2.1/share/pkgs/r5rs-lib/r5rs/run.rkt: [running body]
+> '((+ 3 4) (* x 5) hello)  ;; a list with nested lists.
+((+ 3 4) (* x 5) hello)
+> (list (+ 3 4) (* x 5) 'hello)
+(7 15 hello)
+> ;;; (CONS x L) returns a new list whose first element is x and 
+  ;;; whose subsequent elements are the elements of L
+
+(cons 1 '(2 3 4 5))
+(1 2 3 4 5)
+> (define L '(2 3 4 5))
+> (cons 1 L)
+(1 2 3 4 5)
+> L  ;;; L, of course, has not changed. CONS DOES NOT MODIFY ITS ARGUMENTS
+(2 3 4 5)
+> (define (decreasing n)
+  (cond ((= n 0) '(0))
+        (else (cons n (decreasing (- n 1))))))
+> (decreasing 20)
+(20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0)
+> ;;; (APPEND L1 L2) returns a list containing all the elements of L1 and
+  ;;; all the elements of L2.
+> (append '(2 4 6 8) '(3 5 7 9))
+(2 4 6 8 3 5 7 9)
+> ;;; ACCESSING ELEMENTS OF A LIST
+;; (CAR L) returns the first element of L
+(car '(3 5 7 9))
+3
+> L  ;; L was defined above
+(2 3 4 5)
+> (car L)
+2
+> L ;; does not change. CAR DOES NOT MODIFY ITS PARAMETERS
+(2 3 4 5)
+> ;; (CDR L) returns a list containing all the elements of L except
+  ;; for the first one -- i.e. the "rest" of L.
+(cdr '(2 4 5 7))
+(4 5 7)
+
+> ;; APPEND is easily defined in Scheme (see lecture1.scm).  The 
+  ;; Racket system doesn't let you redefine built-in functions, 
+  ;; so I'm giving it a different name.
+(define (my_append L1 L2)
+  (cond ((null? L1) L2)
+        (else (cons (car L1) (my_append (cdr L1) L2)))
+        ))
+
+> (my_append '(3 4 5 6) '(7 8 9))
+(3 4 5 6 7 8 9)
+> ;; REVERSE is another built-in procedure, (REVERSE L) returns a list containing the elements
+  ;; of L in reverse order.
+(reverse '(1 2 3 45))  
+(45 3 2 1)
+> (reverse '(1 2 (3 4 (5 6) 7) 8 9))  ;; it only reverse the order of the top-level elements
+                                      ;; of a list, not within nested lists.
+(9 8 (3 4 (5 6) 7) 2 1)
+> ;; REVERSE is easily defined in Scheme (see lecture1.scm)
+  ;; This is the O(n^2) version.
+(define (myReverse L)
+  (cond ((null? L) '())
+        (else (append (myReverse (cdr L)) (list (car L))))
+        ))
+
+> (myReverse '(1 2 3 4 5))
+(5 4 3 2 1)
+>  ;; Here is a linear time version of Reverse
+(define (rev from to)
+  (cond ((null? from) to)
+        (else (rev (cdr from) (cons (car from) to)))))
+> (rev '(1 2 3 4 5) '())
+(5 4 3 2 1)
+> (define (yourReverse L) (rev L '()))
+> (yourReverse '(2 4 6 8))
+(8 6 4 2)
+> ;;; Functions are "first class": They are values that can be passed
+  ;;; as parameters, put into lists, returned as results.
+
+(define (f g x)
+  (g (+ x 1)))
+> 
+(define (double y) (* y 2))
+> (f double 7)
+16
+> fac
+#<procedure:fac>
+> (define FnList (list fac double myReverse))
+> FnList
+(#<procedure:fac> #<procedure:double> #<procedure:myreverse>)
+> ((car (cdr FnList)) 10)
+20
+> 

@@ -1,0 +1,28 @@
+~/courses/PL Fall 15/ML (501\)% sml
+Standard ML of New Jersey v110.77 [built: Sat Aug 23 11:18:31 2014]
+- fun fac 0 = 1
+   |  fac n = n * fac (n-1)
+;
+= = val fac = fn : int -> int
+- (* This is a list *)
+- [1,2,3,4]
+= ;
+val it = [1,2,3,4] : int list
+- [[2,3],[4,5]]
+= ;
+val it = [[2,3],[4,5]] : int list list
+- (* :: is the CONS operator *)
+- 3::[4,5,6];
+val it = [3,4,5,6] : int list
+- (* hd is the CAR operator *)
+- hd [1,2,3,4];
+val it = 1 : int
+- tl [1,2,3,4];
+val it = [2,3,4] : int list
+- (* using :: in a pattern saves having to use hd and tl *)
+- fun g [] = 0
+=  |  g (x::xs) = x + g xs
+= ;
+val g = fn : int list -> int
+- g [1,2,3,4];
+val it = 10 : int

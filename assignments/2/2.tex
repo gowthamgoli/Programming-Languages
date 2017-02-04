@@ -1,0 +1,606 @@
+%me=0 student solutions (ps file), me=1 - my solutions (sol file), me=2 - assignment (hw file)
+\def\me{0}
+\def\num{2}  %homework number
+\def\due{Monday, December 14}  %due date
+\def\course{CSCI-GA.2110.001 Programming Languages} %course name, changed only once
+\def\name{GOWTHAM GOLI (N17656180)}   %student changes (instructor keeps!)
+%
+\iffalse
+INSTRUCTIONS: replace # by the homework number.
+(if this is not ps#.tex, use the right file name)
+
+  Clip out the ********* INSERT HERE ********* bits below and insert
+appropriate TeX code.  Once you are done with your file, run
+
+  ``latex ps#.tex''
+
+from a UNIX prompt.  If your LaTeX code is clean, the latex will exit
+back to a prompt.  To see intermediate results, type
+
+  ``xdvi ps#.dvi'' (from UNIX prompt)
+  ``yap ps#.dvi'' (if using MikTex in Windows)
+
+after compilation. Once you are done, run
+
+  ``dvips ps#.dvi''
+
+which should print your file to the nearest printer.  There will be
+residual files called ps#.log, ps#.aux, and ps#.dvi.  All these can be
+deleted, but do not delete ps1.tex. To generate postscript file ps#.ps,
+run
+
+  ``dvips -o ps#.ps ps#.dvi''
+
+I assume you know how to print .ps files (``lpr -Pprinter ps#.ps'')
+\fi
+%
+\documentclass[11pt]{article}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{epsfig}
+\setlength{\oddsidemargin}{.0in}
+\setlength{\evensidemargin}{.0in}
+\setlength{\textwidth}{6.5in}
+\setlength{\topmargin}{-0.4in}
+\setlength{\textheight}{8.5in}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{Java}{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\lstdefinestyle{Ada}{frame=tb,
+  language=Ada,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\newcommand{\handout}[5]{
+   \renewcommand{\thepage}{#1, Page \arabic{page}}
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{
+    \hbox to 5.78in { {\bf \course} \hfill #2 }
+       \vspace{4mm}
+       \hbox to 5.78in { {\Large \hfill #5  \hfill} }
+       \vspace{2mm}
+       \hbox to 5.78in { {\it #3 \hfill #4} }
+      }
+   }
+   \end{center}
+   \vspace*{4mm}
+}
+
+\newcounter{pppp}
+\newcommand{\prob}{\arabic{pppp}}  %problem number
+\newcommand{\increase}{\addtocounter{pppp}{1}}  %problem number
+
+%first argument desription, second number of points
+\newcommand{\newproblem}[2]{
+\ifnum\me=0
+\ifnum\prob>0 \newpage \fi
+\increase
+\setcounter{page}{1}
+\handout{\name, Homework \num, Problem \arabic{pppp}}{\today}{Name: \name}{Due:
+\due}{Solutions to Problem \prob\ of Homework \num}
+\else
+\increase
+\section*{Problem \num-\prob~(#1) \hfill {#2}}
+\fi
+}
+
+%\newcommand{\newproblem}[2]{\increase
+%\section*{Problem \num-\prob~(#1) \hfill {#2}}
+%}
+
+\def\squarebox#1{\hbox to #1{\hfill\vbox to #1{\vfill}}}
+\def\qed{\hspace*{\fill}
+        \vbox{\hrule\hbox{\vrule\squarebox{.667em}\vrule}\hrule}}
+\newenvironment{solution}{\begin{trivlist}\item[]{\bf Solution:}}
+                      {\qed \end{trivlist}}
+\newenvironment{solsketch}{\begin{trivlist}\item[]{\bf Solution Sketch:}}
+                      {\qed \end{trivlist}}
+\newenvironment{code}{\begin{tabbing}
+12345\=12345\=12345\=12345\=12345\=12345\=12345\=12345\= \kill }
+{\end{tabbing}}
+
+%\newcommand{\eqref}[1]{Equation~(\ref{eq:#1})}
+
+\newcommand{\hint}[1]{({\bf Hint}: {#1})}
+%Put more macros here, as needed.
+\newcommand{\room}{\medskip\ni}
+\newcommand{\brak}[1]{\langle #1 \rangle}
+\newcommand{\bit}[1]{\{0,1\}^{#1}}
+\newcommand{\zo}{\{0,1\}}
+\newcommand{\C}{{\cal C}}
+
+\newcommand{\nin}{\not\in}
+\newcommand{\set}[1]{\{#1\}}
+\renewcommand{\ni}{\noindent}
+\renewcommand{\gets}{\leftarrow}
+\renewcommand{\to}{\rightarrow}
+\newcommand{\assign}{:=}
+
+\newcommand{\AND}{\wedge}
+\newcommand{\OR}{\vee}
+
+\newcommand{\For}{\mbox{\bf For }}
+\newcommand{\To}{\mbox{\bf to }}
+\newcommand{\Do}{\mbox{\bf Do }}
+\newcommand{\If}{\mbox{\bf If }}
+\newcommand{\Then}{\mbox{\bf Then }}
+\newcommand{\Else}{\mbox{\bf Else }}
+\newcommand{\While}{\mbox{\bf While }}
+\newcommand{\Repeat}{\mbox{\bf Repeat }}
+\newcommand{\Until}{\mbox{\bf Until }}
+\newcommand{\Return}{\mbox{\bf Return }}
+\newcommand{\Swap}{\mbox{\bf Swap }}
+
+\begin{document}
+
+\ifnum\me=0
+%\handout{PS\num}{\today}{Name: **** INSERT YOU NAME HERE ****}{Due:
+%\due}{Solutions to Problem Set \num}
+%
+%I collaborated with *********** INSERT COLLABORATORS HERE (INDICATING
+%SPECIFIC PROBLEMS) *************.
+\fi
+\ifnum\me=1
+\handout{PS\num}{\today}{Name: Yevgeniy Dodis}{Due: \due}{Solution
+{\em Sketches} to Problem Set \num}
+\fi
+\ifnum\me=2
+\handout{PS\num}{\today}{Lecturer: Yevgeniy Dodis}{Due: \due}{Problem
+Set \num}
+\fi
+
+
+\newproblem{Insertion Sort Using a Linked List}{}
+
+Provide regular expressions for defining the syntax of the following.
+
+\begin{itemize}
+
+\item[(a)]As we discussed in class, the expression $(\lambda x. (x x)) (\lambda x. (x x))$ has no normal form.
+Write another expression that has no normal form. Make sure that your expression is distinct from  $(\lambda x. (x x)) (\lambda x. (x x))$, i.e. that it wouldn’t be convertible to  $(\lambda x. (x x)) (\lambda x. (x x))$.
+Hint: Think about how you’d write a non-terminating expression in a functional language
+
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+
+\item[(b)] Write the definition of a recursive function (other than factorial) using the Y combinator.
+Show a series of reductions of an expression involving that function which illustrates how
+it is, in fact, recursive (as I did in class for factorial)..
+
+\ifnum\me<2
+\begin{solution}
+
+Let FIB = $Y (\lambda f$.$\lambda n$ if (= $n$ 0) 1 else if (= $n$ 1) 1 (+ ($f$ (- $n$ 1)) ($f$ (-$n$ 2))))
+
+and $p$ = $\lambda f$.$\lambda n$ if (= $n$ 0) 1 else if (= $n$ 1) 1 (+ ($f$ (- $n$ 1)) ($f$ (-$n$ 2)))
+
+ $\implies$ FIB = $Y(p) = p(Y(p))$
+ 
+ Consider the evaluation of fibonnaci of 4 
+ \begin{align*}
+ \text{FIB 4} &= \underbrace{(\lambda f.\lambda n \ldots)}_\text{p}(\underbrace{Y(\underbrace{\lambda f.\lambda n \ldots)}_\text{p}}_\text{FIB}) \,\,4\\
+ &\underset{\beta}{\implies}  (\lambda n \text{ if (= }n\text{ 0) 1 else if (= }n\text{1) 1 (+ }(\text{FIB (- }n\text{ 1)) (}FIB \text{ (- n 2)}))) \,\,4\\
+ &\underset{\beta}{\implies}  \lambda n \text{ if (=4 0) 1 else if (= 4 1) 1 (+ (FIB (- 4 1)) (FIB (-4 2))}\\
+ &\underset{\delta}{\implies} \text{(+ (FIB (- 4 1)) (FIB (-4 2)))}\\
+ &\underset{\delta}{\implies} \text{(+ (FIB 3) (FIB 2))}
+ \end{align*}
+On further beta and delta reductions, FIB 2 reduces to (+ 1 1) = 2 and FIB 3 reduces to \\(+ (FIB 2) 1) = 3. Thus FIB 4 evaluates to 5
+\end{solution}
+\fi
+
+\item[(c)]Write the actual expression in the $\lambda$-calculus representing the Y combinator, and show
+that it satisfies the property $Y(f ) = f(Y(f ))$.
+
+\ifnum\me<2
+\begin{solution}
+\begin{align*}
+Y &= \lambda f.(\lambda x.\text{(f (x x))}) (\lambda x.\text{(f (x x))})\\
+Y\,\,f &= \lambda f.(\lambda x.\text{(f (x x))}) (\lambda x.\text{(f (x x))})\,\,f\\
+&\underset{\beta}{\implies} (\lambda x.\text{(f (x x))}) (\lambda x.\text{(f (x x))})\\
+&\underset{\beta}{\implies} f ((\lambda x.\text{(f (x x))}) (\lambda x.\text{(f (x x))}))\\
+&= f(Y\,\,f)
+\end{align*}
+\end{solution}
+\fi
+
+\item[(d)]Summarize, in your own words, what the two Church-Rosser theorems state.
+
+\ifnum\me<2
+\begin{solution}
+
+For a given lambda expressions, there could be multiple ways of reducing it to a normal form. However some particular order of reductions might not always terminate to a normal form. 
+
+Church-Rosser theorem 1 states that if any two different order of reductions of a given lambda expression terminate then they will result in the same normal form
+
+Church-Rosser throrem 2 states that if there is some order of reductions of a given lambda expression that terminates to a normal form then Normal Order reduction will definitely terminate. (By theorem 1 it terminates to the same normal form)
+\end{solution}
+\fi
+
+\end{itemize}
+
+
+\newproblem{}
+
+
+\begin{itemize}
+
+\item[(a)]In ML, why do all lists have to be homogeneous (i.e. all elements of a list must be of
+the same type)?
+\ifnum\me<2
+\begin{solution}
+
+It makes the static checking of the types possible and the type checker sound and complete
+\end{solution}
+\fi
+
+\item[(b)]Write a function in ML whose type is $('a \rightarrow 'b) \rightarrow ('b$ list $\rightarrow 'c$ list$) \rightarrow 'a \rightarrow 'c.$
+
+\ifnum\me<2
+\begin{solution}
+\begin{lstlisting}[style = Ada]
+fun foo f g x = hd (g [(f x)])
+\end{lstlisting}
+val foo = fn : ($'a \rightarrow 'b) \rightarrow ('b \text{ list} \rightarrow 'c \text{ list}) \rightarrow 'a \rightarrow 'c$
+\end{solution}
+\fi
+
+\item[(c)]What is the type of the following function (try to answer without running the ML
+system)?
+\begin{lstlisting}[style = Ada]
+fun foo f (op >) x (y,z) =
+  let fun bar a = if x > z then y else a
+  in bar [1,2,3]
+  end
+\end{lstlisting}
+\ifnum\me<2
+\begin{solution}
+
+val foo = fn : $'a \rightarrow ('b \,\,*\,\, 'c \rightarrow bool) \rightarrow \, 'b \rightarrow \text{int list }* \,\,'c \rightarrow \text{int list}$
+\end{solution}
+\fi
+
+\item[(d)]Provide an intuitive explanation of how the ML type inferencer would infer the type
+that you gave as the answer to the previous question.
+
+\ifnum\me<2
+\begin{solution}
+\begin{itemize}
+\item As $f$ is never used in the body of the function, there is no way to infer it's type. So let $f : \,\,'a$
+\item From the \textit{in end} block we can infer that $bar$ takes integer list as an argumnemt. Therefore $a :$ \textit{int list} and since $bar$ returns $a$, $bar :$\textit{ int list} $\rightarrow$ \textit{int list}
+\item Therefore $y :$ \textit{int list} since $a$ and $y$ have to be of the same type
+\item The result of \textit{(op $>$)} is boolean as it used as an conditional expression and $>$ is applied on $x$ and $z$. Therefore if $x : \,\,'b$ and $z  : \,\,'c$ then $(op >) : \,\ 'b \,\,* \,\,'c \rightarrow bool$ 
+\item Therefore, val foo = fn : $'a \rightarrow ('b \,\,*\,\, 'c \rightarrow bool) \rightarrow \,'b \rightarrow \text{int list }* \,\,'c \rightarrow \text{int list}$
+\end{itemize}
+\end{solution}
+\fi
+\end{itemize}
+
+
+
+\newproblem{}{}
+
+Consider the following package specification for an Ada package that implements a queue of
+integers.
+
+\begin{lstlisting}[style = Ada]
+package queue is
+  function extract return integer;
+  function insert(x: integer);
+end queue;
+\end{lstlisting}
+
+\begin{itemize}
+
+\item[(a)]Why would this package not be said to implement an abstract data type (ADT) for a
+queue?
+
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+
+\item[(b)]Modify the above package specification, and implement a simple package body (that
+performs no error checking), so that a queue is an ADT.
+
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+
+\end{itemize}
+
+\newproblem{Asymptotic Comparisons}
+
+
+\begin{itemize}
+
+\item[(a)]As discussed in class, what are the three features that a language must have in order to
+considered object oriented?
+
+\ifnum\me<2
+\begin{solution}
+
+\begin{itemize}
+\item Encapsulation of data and code. Eg - fields and methods of classes
+\item Inheritance - deine a new class based on an existing class
+\item Subtyping with dynamic dispatch. 
+
+Subtyping - One type (subtype) is considered to be another type (supertype)
+
+Dynamic Dispatch - Methods are invoked according to the actual type of the object
+\end{itemize}
+\end{solution}
+\fi
+
+\item[(b)]
+\begin{itemize}
+\item[i.] What is the “subset interpretation of suptyping”?
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+
+\item[ii.] Provide an intuitive answer, and give an example, showing why class derivation in
+Java satisfies the subset interpretation of subtyping.
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+
+\item[iii.] Provide an intuitive answer, and give an example, showing why subtyping of functions in Scala satisfies the subset interpretation of subtyping.
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+\end{itemize}  
+
+\item[(c)]Consider the following Scala definition of a tree type, where each node contains a value.
+\begin{lstlisting}[style = Ada]
+abstract class Tree[T <: Ordered[T]]
+case class Node[T <: Ordered[T]](v:T,l:Tree,r:Tree) extends Tree[T]
+case class Leaf[T <: Ordered[T]](v:T) extends Tree[T]
+\end{lstlisting}
+Ordered is a built-in trait in Scala (see
+\url{http://www.scala-lang.org/api/current/index.html#scala.math.Ordered}). Write
+a Scala function that takes a Tree[T], for any ordered T, and returns the maximum value
+in the tree. Be sure to use good Scala programming style.
+\ifnum\me<2
+\begin{solution}
+\begin{lstlisting}[style = Ada]
+def maxTree[T <: Ordered[T]](t: Tree[T]):T = t match{
+  case Leaf(lb) => lb
+  case Node(lb, left, right) => {
+    if(lb >= maxTree(left) && lb >= maxTree(right)){
+      lb
+    }
+    else if(maxTree(left) >= lb && maxTree(left) >= maxTree(right)){
+      maxTree(left)
+    }
+    else
+      maxTree(right)
+    }
+}
+\end{lstlisting}
+\end{solution}
+\fi
+
+\item[(d)] In Java generics, subtyping on instances of generic classes is invariant. That is, two
+different instances C$<$A$>$ and C$<$B$>$ of a generic class $C$ have no subtyping relationship,
+regardless of a subtyping relationship between $A$ and $B$ (unless, of course,$A$ and $B$ are
+the same class).
+\begin{itemize}
+\item[i.]Write a function (method) in Java that illustrates why, even if $B$ is a subtype of $A$,
+C$<$B$>$ should not be a subtype of C$<$A$>$. That is, write some Java code that, if the
+compiler allowed such covariant subtyping among instances of a generic class, would
+result in a run-time type error
+\ifnum\me<2
+\begin{solution}
+\begin{lstlisting}[style = Java]
+class Subtyping {  
+  public static void addElement(List<Number> nums) {
+    nums.add(new Double("5.0"));
+  } 
+  public static void main(String args[]) {
+    ArrayList<Integer> intList = new ArrayList<Integer>();
+    addElement(intList);
+  }
+}
+\end{lstlisting}
+
+If subtyping were allowed with generic type parameters then it would have been valid to pass \textit{intList} of type \textit{ArrayList$<$Integer$>$} to \textit{AddElement} method which would accept it as a \textit{List$<$Number$>$} object and would have added a double object into it but \textit{Integer} and \textit{Double} are siblings. So \textit{ArrayList$<$Integer$>$} cannot hold a double object. Hence this would result in a run-time type error. Therefore even if $B$ is a subtype of $A$, C$<$B$>$ should not be a subtype of C$<$A$>$
+\end{solution}
+\fi
+
+\item[ii.] Modify the code you wrote for the above question that illustrates how Java allows
+a form of polymorphism among instances of generic classes, without allowing subtyping. That is, make the function you wrote above be able to be called with many
+different instances of a generic class.
+\ifnum\me<2
+\begin{solution}
+\begin{lstlisting}[style = Java]
+class Subtyping {  
+  public static void addElement(List<Number> nums) {
+    nums.add(new Double("5.0"));
+  } 
+  public static void main(String args[]) {
+    //ArrayList<Integer> intList = new ArrayList<Integer>();
+    ArrayList<Number> numList = new ArrayList<Number>();
+    //addElement(intList);
+    addElement(numList);
+  }
+}
+\end{lstlisting}
+In the above code, \textit{AddElement} method will accept \textit{numList} as a \textit{List$<$Number$>$} object since \textit{ArrayList} $<:$ \textit{List} then \textit{ArrayList$<$Number$>$} $<:$ \textit{List$<$Number$>$}. Therefore if polymorphism is allowed among any two classes then Java allows polymorphism among instances of those generic classes parametrized by same type.
+\end{solution}
+\fi
+\end{itemize}  
+
+\item[(e)] 
+\begin{itemize}
+\item[i.]In Scala, write a generic class definition that supports covariant subtyping among
+instances of the class. For example, define a generic class C[E] such that if class B
+is a subtype of class A, then C[B] is a subtype of C[A].
+\ifnum\me<2
+\begin{solution}
+\begin{lstlisting}[style = Java]
+class C[+T] {
+  override def toString() = "C" 
+}
+\end{lstlisting}
+If a generic class is defined using a + before the type parameter then covariant subtyping of instances of a generic class is possible i.e if class B
+is a subtype of class A, then C[B] is a subtype of C[A].
+\end{solution}
+\fi
+
+\item[ii.] Give an example of the use of your generic class.
+\ifnum\me<2
+\begin{solution}
+\begin{lstlisting}[style = Java]
+class C[+T] {
+  override def toString() = "C" 
+}
+class A
+class B extends A
+object CovariantSubtyping{
+  def h(x:C[A]) = 23  
+  def main(args: Array[String]){
+    val a = new C[A]()	    //a: C[A]
+    val b = new C[B]()	    //b: C[B] implies b <: a
+    h(a)		//Obviously this is a valid call
+    h(b)		//This is also a valid call as C is covariantly subtyped
+  }
+}
+\end{lstlisting}
+\end{solution}
+\fi
+\end{itemize} 
+
+\item[(f)] 
+\begin{itemize}
+\item[i.]In Scala, write a generic class definition that supports contravariant subtyping
+among instances of the class. For example, define a generic class C[E] such that
+if class B is a subtype of class A, then C[A] is a subtype of C[B]
+\ifnum\me<2
+\begin{solution}
+\begin{lstlisting}[style = Java]
+class C[-T] {
+  override def toString() = "C" 
+}
+\end{lstlisting}
+If a generic class is defined using a - before the type parameter then contravariant subtyping of instances of a generic class is possible i.e if class B
+is a subtype of class A, then C[A] is a subtype of C[B].
+\end{solution}
+\fi
+
+\item[ii.] Give an example of the use of your generic class
+\ifnum\me<2
+\begin{solution}
+\begin{lstlisting}[style = Java]
+class C[-T] {
+  override def toString() = "C" 
+}
+class A
+class B extends A
+object CovariantSubtyping{
+  def h(x:C[B]) = 23  
+  def main(args: Array[String]){
+    val a = new C[A]()	    //a: C[A]
+    val b = new C[B]()	    //b: C[B] implies a <: b
+    h(b)		//Obviously this is a valid call
+    h(a)		//This is also a valid call as C is contravariantly subtyped
+  }
+}
+\end{lstlisting}
+\end{solution}
+\fi
+\end{itemize} 
+
+\end{itemize}
+\newproblem{Asymptotic Comparisons}
+
+\begin{itemize}
+\item[(a)] What is the advantage of a mark-and-sweep garbage collector over a reference counting
+collector?
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+
+\item[(b)]What is the advantage of a copying garbage collector over a mark and sweep garbage
+collector?
+
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+
+\item[(c)]Write a brief description of generational copying garbage collection.
+
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+
+\item[(d)] Write, in the language of your choice, the procedure delete(x) in a reference counting
+GC system, where x is a pointer to a structure (e.g. object, struct, etc.) and delete(x)
+reclaims the structure that x points to. Assume that there is a free list of available
+blocks and addToFreeList(x) puts the structure that x points to onto the free list
+
+\ifnum\me<2
+\begin{solution}
+
+\end{solution}
+\fi
+\end{itemize}
+
+\end{document}
+
+

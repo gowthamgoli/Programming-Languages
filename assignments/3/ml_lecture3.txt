@@ -1,0 +1,59 @@
+(* Here the compiler infers that x and y are integers
+   based on the use of < . *)
+- fun f x y = x < y;
+val f = fn : int -> int -> bool
+
+(* This function g takes a function less as a parameter *)
+- fun g less x y = less x y;
+val g = fn : ('a -> 'b -> 'c) -> 'a -> 'b -> 'c
+
+(* This version of g takes a function as it's first parameter,
+   but uses it as the infix operator < in the body.  The only
+   requirement of any function passed in to (op <) is that
+   it take a tuple of two elements as the parameter *)
+- fun g (op <) x y = x < y;
+val g = fn : ('a * 'b -> 'c) -> 'a -> 'b -> 'c
+
+(* Calling g with a function that takes a tuple (x,y) as a parameter
+   and compares the length of x and y *)
+- g (fn (x,y) => length x < length y) [1,2,3,4] ["hello", "goodbye"];
+val it = false : bool
+
+(* Passing the infix operator < to g.  The compiler infers that it
+   must be the integer < operator that is being passed *)
+- g (op <)  5 6;
+val it = true : bool
+
+(* ML provides a let construct for defining nested variables and 
+   functions *)
+- fun f x y = let 
+=   val z = x + y + 1
+=   fun g w = w * 2
+= in g z
+= end;
+val f = fn : int -> int -> int
+
+(* This function returns a tuple of two elements (the
+   parameters that were passed) *)
+- fun g x y = (x,y);
+val g = fn : 'a -> 'b -> 'a * 'b
+
+(* A declaration using "val" can declare a single variable, or
+   can declare multiple variables using a pattern.  The below
+   definition introduces the variable w and binds it to the first
+   element of the tuple returned by g, and introduces the variable
+   z and binds it to the second element of the tuple returned by g. *)
+- val (w,z) = g 3 7.2;
+val w = 3 : int
+val z = 7.2 : real
+
+(* Here's an example of a pattern used in a "val" declaration 
+   within a let *)
+- fun f a b =
+=  let val (x,y) = g a b
+=  in x+y+1
+= end;
+val f = fn : int -> int -> int
+- f 3 4;
+val it = 8 : int
+- 

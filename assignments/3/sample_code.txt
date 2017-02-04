@@ -1,0 +1,71 @@
+
+These are the code samples appearing in the PDF of the ML assignment.
+
+(1)
+
+partition 6 [5,2,8,4,1,9,6,10]
+
+
+(2)
+
+partitionSort [5,2,9,10,12,4,8,1,19]
+
+
+(3)
+
+Sort (op <) [1,9, 3, 6, 7]
+
+Sort (fn(a,b) => length a < length b) [[1, 9, 3, 6], [1], [2,4,6,9], [5,5]]
+
+
+(4)
+
+val myTree = node(5,node(2,leaf 3,empty), node(12,node(8,leaf 7,leaf 11), node(4,leaf 1, node(6,empty, leaf 9))))
+
+
+(5)
+
+maxTree (op <) myTree
+
+maxTree (op >) myTree
+
+
+(6)
+
+fun preorder ... = ...  (* fill this in *)
+
+fun inorder ... = ...  (* fill this in *)
+
+fun postorder ... = ...  (* fill this in *)
+
+Labels preorder myTree
+
+Labels inorder myTree
+
+Labels postorder myTree
+
+
+(7)
+
+lexLess (op <) [1,2,3,4] [1,2,3,4,5]
+
+lexLess (op <) [1,2,3,4] [1,2,3]
+
+lexLess (fn(L1,L2) => length L1 < length L2) [[3,4,5,6],[1,2,4]] [[1,2,3,4],[1,2,3,4]]
+
+
+
+(8)
+
+(* Labels are [1,2,3,4,5,6,7] *)
+val t1 = node(5,node(4,node(2,leaf 1, leaf 3), empty),node (7,leaf 6, empty))
+
+(* Labels are [0,1,2,3,4,5,6,7] *)
+val t2 = node (5,node(4,node (2,node(1,leaf 0, empty),leaf 3),empty),node (7,leaf 6,empty))
+
+(* Labels are [1,2,3,4,5,6] *)
+val t3 = node(5,node(4,node(2,leaf 1, leaf 3), empty), leaf 6)
+
+sortTreeList (op <) [t1, t2, t3]
+
+Sort (fn(a,b) => lexLess (op <) a b) [[1,2,3,4,5,6,7], [0,1,2,3,4,5,6,7], [1,2,3,4,5,6]];

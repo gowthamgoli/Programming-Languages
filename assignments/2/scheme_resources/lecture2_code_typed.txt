@@ -1,0 +1,161 @@
+
+> ;; second element of a list
+(car (cdr '(1 2 3 4)))
+2
+> (cadr '(1 2 3 4))  ;; shorthand for (car (cdr ..
+2
+
+> ;; third element
+(caddr '(1 2 3 4))  ;; shorthand for (car (cdr (cdr ...
+3
+
+> (cadar '((1 2 3) (4 5 6) (7 8 9))) ;; what's this?
+2
+
+> (define (add1 x) (+ x 1))
+
+> ;;; (MAP f L) returns a list of the result of applying f to each element of L
+> (map add1 '(2 4 6 8 10))
+(3 5 7 9 11)
+
+> (define (myMap f L)  ;; see lecture2.scm
+  (cond ((null? L) '())
+	(else (cons (f (car L))  (myMap f (cdr L))))))
+
+> (mymap add1 '(2 4 6 8))
+(3 5 7 9)
+
+> ;;; subtracting 1 from each element of the list
+
+(define (sub1 x) (- x 1))
+> (mymap sub1 '(2 4 6 8))
+(1 3 5 7)
+> 
+;;; use a LAMBDA to define a function without having to give it a name
+;;; (lambda (arg1...argn) body)
+
+(map (lambda (x) (* x 2)) '(1 2 3 4 5))
+(2 4 6 8 10)
+> (define g (lambda (z) (+ z 25)))
+> g
+#<procedure:g>
+> (g 5)
+30
+
+> (define x 2)  ;; this defines x in the outermost (global) scope
+
+> ;;; (h z) returns one function or another, depending on the value of z
+(define (h z)
+  (cond ((= z 1) (lambda (w) (+ w 1)))
+        (else (lambda (w) (- w 1)))))
+
+> ((h x) 7)
+6
+> 
+
+;; Scheme is statically scoped.  Functions are evaluated in the environment
+;; in which they are defined (not called)
+
+> (define (foo x)
+     (lambda (y) (+ x y)))  ;; notice that x is non-local within the (lambda ...)
+
+> (define bar (foo 20))   ;;  the x within foo gets the value 20,
+                          ;;  this is the x that is referenced within the (lambda ..)
+> bar
+#<procedure>
+> x
+2
+> (bar 10)   ;; this will evaluate (+ x y) where y is 10 and x is 20, above.
+30
+> ;;;; (define (f x) (+ x 2)) is just syntactic sugar 
+  ;;;; for (define f (lambda (x) (+ x 2)))
+
+;; what does this do?
+
+(define (baz f)
+  (lambda (x) (+ 1 (f x))))
+
+;;; it defines a function baz which takes as a parameter a function f,
+;;; and returns a function that takes a parameter x and returns 1 plus
+;;; the result of calling f on x.
+
+> 
+((baz (lambda (y) (* 2 y))) 7)
+15
+> 
+
+;;; nested declarations: LET, LET*, or LETREC
+
+(define (bif y)
+  (let ((x 7)  
+        (z (+ y 2)))  ;; the expression for z cannot refer to this local x
+    (+ x z)))
+> (bif 10)
+19
+> 
+
+;; In a LET, the expressions giving values to each newly introduced variable cannot
+;; reference any other newly introduced variable.
+
+
+;;; LET* introduces the new variables a sequence, each expression can
+;;; refer to previously introduced variables.
+
+;; x is still a global variable whose value is 2.
+> x
+2
+
+;; let defines a new scope, in this case defining new (nested) variables x and y.
+> (let ((x 10)
+        (y (+ x 2)))  ;; the x here refers to the outer x, which is the global x whose
+    y)                ;; value is 2.
+4
+
+
+
+> (let* ((x 10)
+         (y (+ x 2)))  ;; the x here is the newly introduced x
+    y)
+12
+
+
+> ;;; LETREC allows you to define recursive functions within a nested scope
+
+(define (f x)
+  (letrec ((fac (lambda (x) (if (= x 0) 1 (* x (fac (- x 1)))))))
+     (fac x)))
+> (f 6)
+720
+
+;; LETREC can also be used to define mutually-recursive functions.
+> (define (g x)
+    (letrec ((fac1 (lambda (x) (if (= x 0) 1 (* x (fac2 (- x 1))))))
+             (fac2 (lambda (x) (fac1 x))))
+      (fac1 x)))
+> (g 6)
+720
+
+
+> ;;; SCHEME DOES INCLUDE DESTRUCTIVE (NON-FUNCTIONAL) OPERATORS
+  ;;; DO NOT USE! EVER! I'M SERIOUS!
+
+x
+2
+> (set! x (+ x 1))
+> x
+3
+> ;;; set-car! and set-cdr! modify existing lists
+
+(define L '(1 2 3 4))
+> 
+(set-car! L 8)
+> L
+(8 2 3 4)
+> (set-cdr! L '(9 10))
+> L
+(8 9 10)
+> (set-cdr! L L)  ;; this creates a cycle, so that the (cdr L) points back to L.
+> L
+#0=(8 . #0#)  ;; interpreter is smart enough to recognize a cycle (instead of printing
+              ;; in an infinite loop!)
+

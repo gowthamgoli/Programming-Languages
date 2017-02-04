@@ -1,0 +1,357 @@
+% scala
+Welcome to Scala version 2.11.7 (Java HotSpot(TM) 64-Bit Server VM, Java 1.8.0_51).
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+// Defining a class, not defining any new fields or methods.
+// All classes derive from the Any class (like Object in Java)
+scala> class A
+defined class A
+
+// Defining a class B that is a subclass of A
+scala> class B extends A
+defined class B
+
+// Here's an A object
+scala> val a = new A()
+a: A = A@73a28541
+
+// This functon is of type A => Int
+scala> def f(a:A) = 6
+f: (a: A)Int
+
+// Here's a B object
+scala> val b: B = new B()
+b: B = B@1761e840
+
+// Since f expects an A object as a parameter, a
+// B object can be passed to it.
+scala> f(b)
+res1: Int = 6
+
+// Of course, an A variable can refer to a B object
+scala> val c: A = new B()
+c: A = B@19bb089b
+
+// Considering subtyping of function types: Here 
+// is a function g that takes a parameter h of type
+// A => A
+scala> def g(h: A=>A) = h(new A())
+g: (h: A => A)A
+
+// Here is a function i that takes a parameter h of type
+// B => B
+scala> def i(h: B=>B) = h(new B())
+i: (h: B => B)B
+
+// Here is a function faa of type A=>A
+scala> def faa(x:A) = x
+fa: (x: A)A
+
+// Here is a function fab of type A=>B
+scala> def fab(x:A) = new B()
+fab: (x: A)B
+
+// Here is a function fba of type B=>A
+scala> def fba(x:B) = new A()
+fba: (x: B)A
+
+// Here is a function fbb of type B=>B
+scala> def fbb(x:B) = new B()
+fbb: (x: B)B
+
+// g expects an A=>A, so it is, of course, OK to 
+//pass an A=>A to g.
+scala> g(faa)
+res2: A = A@130f889
+
+// g expects an A=>A, so it OK to pass an A=>B
+// to g due to function subtyping, which is 
+// covariant on the output type.
+scala> g(fab)
+res3: A = B@8e0379d
+
+// g expects an A=>A, so it cannot be passed an B=>A
+// since B=>A is not a subtype of A=>A, due to 
+// function subtyping being contravariant on the 
+// input type.
+scala> g(fba)
+<console>:15: error: type mismatch;
+ found   : B => A
+ required: A => A
+       g(fba)
+         ^
+
+// g expects an A=>A, so it cannot be passed an B=>B
+// since B=>B is not a subtype of A=>A, due to 
+// function subtyping being contravariant on the 
+// input type.
+scala> g(fbb)
+<console>:15: error: type mismatch;
+ found   : B => B
+ required: A => A
+       g(fbb)
+         ^
+// i expects a B=>B, so it is OK to pass it an
+// A=>B, since A=>B is a subtype of B=>B due to
+// function subtyping being contravariant on the
+// input type.
+scala> i(fab)
+res6: B = B@327514f
+
+// i expects a B=>B, so, of course, it is OK to pass it a B=>B
+scala> i(fbb)
+res7: B = B@7b02881e
+
+// i expects a B=>B, so cannot be passed a B=>A, since B=>A is not
+// is subtype of B=>B, due to function subtyping being covariant
+// in the return type.
+scala> i(fba)
+<console>:15: error: type mismatch;
+ found   : A
+ required: B
+       i(fba)
+         ^
+// This is Scala's version of a lambda expression, i.e. an 
+// anonymous function. Here is a fuction that takes two
+// integer parameters and returns an integer.
+scala> (x:Int,y:Int) => x+y
+res9: (Int, Int) => Int = <function2>
+
+// Passing g, above, an anonymous function of type A=>B.
+scala> g((a:A) => new B())
+res10: A = B@3fc79729
+
+// CASE CLASSES -- supports pattern matching analogous to
+// datatypes in ML.
+
+// defining an abstract class to serve as the parent
+// class for case classes. Here is an abstract class
+// representing a tree.
+
+scala> abstract class Tree
+defined class Tree
+
+// This is a case class, derived from Tree, representing
+// a leaf. 
+scala> case class Leaf(x:Int) extends Tree
+defined class Leaf
+
+// This is a case class, derived from Tree, representing
+// a node. 
+scala> case class Node(left: Tree, right: Tree) extends Tree
+defined class Node
+
+// Here is the fringe function, of type Tree => List[Int],
+// that computes the fringe of a Tree.
+scala> def fringe(t: Tree): List[Int] = t match {
+   case Leaf(x) => List(x)
+   case Node(left,right) => fringe(left) ++ fringe(right)
+ }
+fringe: (t: Tree)List[Int]
+
+// This creates a Node object. Notice that
+// you don't use "new" to create objects of a case class.
+scala> val myTree = Node(Leaf(3),Node(Leaf(4), Leaf(5)))
+myTree: Node = Node(Leaf(3),Node(Leaf(4),Leaf(5)))
+
+// Running fringe.
+scala> fringe(myTree)
+res0: List[Int] = List(3, 4, 5)
+
+// This is a scala generic class. It just overrides
+// the toString() method that is defined in the Any
+// class (the ancestor class of all classes).
+scala> class C[T](x:T) {
+         override def toString() = "C[" + x + "]"
+       }
+defined class C
+
+// Creating an A object (see class A, above)
+scala> val a = new A()
+a: A = A@17a703f5
+
+// Instantiating the C generic with an A object, 
+// to form a C[A] object.
+scala> new C(a)
+res4: C[A] = C[A@17a703f5]
+
+scala> val c = new C(a)
+c: C[A] = C[A@17a703f5]
+
+scala> val b = new B()
+b: B = B@1e253c9d
+
+// Instantiating the C generic with an B object, 
+// to form a C[B] object.
+scala> val d = new C(b)
+d: C[B] = C[B@1e253c9d]
+
+// Here's a function of type C[A]=>Int
+scala> def g(c: C[A]) = 7
+g: (c: C[A])Int
+
+scala> g(c)
+res5: Int = 7
+
+// There is no subtyping among instances of a generic
+// (unless explicitly specified). This is known as "invariant" 
+// subtyping, as in Java.
+
+// I can't pass a C[B] to a function expecting a C[A].
+scala> g(d)
+<console>:17: error: type mismatch;
+ found   : C[B]
+ required: C[A]
+Note: B <: A, but class C is invariant in type T.
+You may wish to define T as +T instead. (SLS 4.5)
+       g(d)
+         ^
+
+// Covariant subtyping of instances of a generic class
+// IS possible, if the generic class is defined using
+// a "+" before the type parameter:
+
+scala> class D[+T] {
+         override def toString() = "D" 
+       }
+defined class D
+
+// These examples show the covariant subtyping on
+// instances of D[]. In this case, D[B] is a
+// subtype of D[A].
+scala> val e = new D[A]()
+e: D[A] = D
+
+scala> val h = new D[B]()
+h: D[B] = D
+
+
+scala> def h(x:D[A]) = 23
+h: (x: D[A])Int
+
+scala> h(e)
+res7: Int = 23
+
+scala> val i = new D[B]()
+i: D[B] = D
+
+scala> h(i)
+res8: Int = 23
+
+// Contrvariant subtyping of instances of a generic class
+// is also possible, if the generic class is defined using
+// a "-" before the type parameter:
+
+scala> class E[-T]
+defined class E
+
+// This shows that E[A] is a subtype of E[B]
+scala> val p = new E[A]()
+p: E[A] = E@2fe2965c
+
+scala> val q = new E[B]()
+q: E[B] = E@39ab5ef7
+
+scala> def z(x: E[B]) = 30
+z: (x: E[B])Int
+
+scala> z(q)
+res9: Int = 30
+
+scala> z(p)
+res10: Int = 30
+
+// Defining covariantly subtyped and contravariantly subtyped generic classes
+// is a challenge. 
+
+// In covariantly subtyped generic classes, the type parameter T can be the
+// return type of a method (the so-called "covariant position") but cannot
+// be a type of the parameter to a method.
+
+// Here, the next() method has a T as the return type ("covariant position"),
+// so this covariant generic class definition is fine.
+scala> class C[+T](x:T) {
+     |   def next() = x
+     | }
+defined class C
+
+// Here, the foo() method has a T as the parameter type ("contravariant position"),
+// so this covariant generic class definition will fail.
+scala> class D[+T] {
+     |    def foo(x:T) = 6
+     | }
+<console>:11: error: covariant type T occurs in contravariant position in type T of value x
+          def foo(x:T) = 6
+                  ^
+
+// In contrariantly subtyped generic classes, the type parameter T can be the
+// type of a method's parameter (the so-called "contravariant position") but cannot
+// be the return type of a method.
+
+// Here, the foo() method has a T as a parameter type ("contravariant position"),
+// so this contravariant generic class definition is fine.
+scala> class E[-T] {
+     |    def foo(x:T) = 6
+     | }
+defined class E
+
+// Here, the next() method has a T as the return type ("covariant position"),
+// so this contravariant generic class definition will fail.
+scala> class F[-T](x:T) {
+     |    def next() = x
+     | }
+<console>:11: error: contravariant type T occurs in covariant position in type ()T of method next
+          def next() = x
+              ^
+
+// While subtyping can provide some nice flexibility, to support code reuse, you're often
+// better off using the polymorphism provided by generic methods, rather than subtyping.
+
+// For example, here is a function fa of type C[A]=>A, where C is the above covariantly-subtyped
+// generic class.
+scala>def fa(c: C[A]) = c.next()
+fa: (c: C[A])A
+
+// Here is an object of type C[B]
+scala> val d = new C[B](new B())
+d: C[B] = C@7bfcd12c
+
+//Here is an object of type C[A]
+scala> val e = new C[A](new A())
+e: C[A] = C@445b84c0
+
+// Calling fa (a function of type C[A]=>A) on a C[A] object
+// returns an A object.
+scala> fa(e)
+res0: A = A@1b0375b3
+
+// However, although calling f on a C[B] object returns a value
+// that is really a B object, the return TYPE is still A.
+scala> fa(d)
+res1: A = B@3cda1055
+
+// Thus, it's an error to try to define a B variable that refers
+// to the object returned by fa(d), even though the object really
+// is a B object.
+scala> val b:B = fa(d)
+<console>:15: error: type mismatch;
+ found   : A
+ required: B
+       val b:B = fa(d)
+                   ^
+
+// Writing the function as a generic instead is probably what
+// is desired in most cases -- and it doesn't require worrying
+// about covariance/contravariance.
+
+scala> def fb[T](c:C[T]):T = c.next()
+fb: [T](c: C[T])T
+
+// If fb is called on a C[A], the return type is A.
+scala> fb(e)
+res2: A = A@1b0375b3
+
+//If fb is called on a C[B], the return type is B.
+scala> fb(d)
+res3: B = B@3cda1055
